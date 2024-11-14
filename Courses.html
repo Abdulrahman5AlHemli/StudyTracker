@@ -37,6 +37,7 @@
             flex-direction: column;
             align-items: center;
             color: #ffffff;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar img {
@@ -58,8 +59,6 @@
         }
 
         .menu-item {
-            display: flex;
-            align-items: center;
             padding: 12px 20px;
             margin: 8px 0;
             background-color: #ffffff;
@@ -73,7 +72,13 @@
 
         .menu-item.active, .menu-item:hover {
             background-color: #b89e80;
-            color: #ffffff;
+            color: #fff;
+        }
+
+        .menu-item a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
 
         /* Main Content */
@@ -150,7 +155,31 @@
             font-weight: bold;
         }
 
-        /* Buttons */
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modify-btn, .delete-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modify-btn {
+            background-color: #b89e80;
+            color: #ffffff;
+        }
+
+        .delete-btn {
+            background-color: #d9534f;
+            color: #ffffff;
+        }
+
+        /* Main Buttons */
         .buttons {
             margin-top: 20px;
             display: flex;
@@ -172,6 +201,10 @@
         .button:hover {
             background-color: #a08060;
         }
+        a {
+            text-decoration: none;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -181,8 +214,8 @@
             <img src="user-avatar.png" alt="User Avatar">
             <p>Hi, First name of the user</p>
             <div class="sidebar-menu">
-                <div class="menu-item"><a href="index.html" style="color: inherit; text-decoration: none;">Home</a></div>
-                <div class="menu-item"><a href="calendar.html" style="color: inherit; text-decoration: none;">Calendar</a></div>
+                <div class="menu-item"><a href="Home.html">Home</a></div>
+                <div class="menu-item"><a href="Calendar.html">Calendar</a></div>
                 <div class="menu-item active">Courses</div>
             </div>
         </div>
@@ -192,7 +225,7 @@
             <!-- Top Bar -->
             <div class="top-bar">
                 <div class="search-bar">
-                    <input type="text" placeholder="Course Name / Short">
+                    <input type="text" placeholder="Course Name">
                 </div>
                 <div class="top-icons">
                     <img src="settings-icon.png" alt="Settings Icon">
@@ -205,8 +238,8 @@
                 <h2>Courses</h2>
                 <div class="course-list" id="courseList"></div>
                 <div class="buttons">
-                    <button class="button">+ Add Course</button>
-                    <button class="button">Edit</button>
+                    <button class="button" onclick="location.href='AddCourse.html'">+ Add Course</button>
+                    <button class="button" onclick="toggleEditMode()">Edit</button>
                 </div>
             </div>
         </div>
@@ -214,6 +247,8 @@
 
     <script src="database.js"></script>
     <script>
+        let editMode = false;
+
         function loadCourses() {
             const courseList = document.getElementById('courseList');
             courseList.innerHTML = '';
@@ -228,8 +263,43 @@
                     </div>
                     <span>Term: ${course.term}</span>
                 `;
+
+                if (editMode) {
+                    const actions = document.createElement('div');
+                    actions.classList.add('action-buttons');
+
+                    const modifyBtn = document.createElement('button');
+                    modifyBtn.classList.add('modify-btn');
+                    modifyBtn.textContent = 'Modify';
+                    modifyBtn.onclick = () => modifyCourse(course.course_ID);
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.classList.add('delete-btn');
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.onclick = () => deleteCourse(course.course_ID);
+
+                    actions.appendChild(modifyBtn);
+                    actions.appendChild(deleteBtn);
+                    courseItem.appendChild(actions);
+                }
+
                 courseList.appendChild(courseItem);
             });
+        }
+
+        function toggleEditMode() {
+            editMode = !editMode;
+            loadCourses();
+        }
+
+        function deleteCourse(courseID) {
+            db.delete(courseID);
+            loadCourses();
+        }
+
+        function modifyCourse(courseID) {
+            localStorage.setItem('courseToModify', courseID);
+            window.location.href = 'ModifyCourse.html';
         }
 
         document.addEventListener('DOMContentLoaded', loadCourses);
