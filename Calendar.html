@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar</title>
     <!-- FullCalendar CSS -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <!-- Styles -->
     <style>
         /* General Reset */
         * {
@@ -28,7 +28,6 @@
             width: 100vw;
             height: 100vh;
             display: flex;
-            padding: 0;
         }
 
         /* Sidebar */
@@ -40,7 +39,6 @@
             flex-direction: column;
             align-items: center;
             color: #ffffff;
-            border-radius: 0; /* Sharp edges */
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -63,8 +61,6 @@
         }
 
         .menu-item {
-            display: flex;
-            align-items: center;
             padding: 12px 20px;
             margin: 8px 0;
             background-color: #ffffff;
@@ -72,8 +68,8 @@
             cursor: pointer;
             color: #333;
             font-weight: bold;
+            text-align: center;
             transition: 0.3s;
-            justify-content: center;
         }
 
         .menu-item.active, .menu-item:hover {
@@ -85,8 +81,6 @@
             text-decoration: none;
             color: inherit;
             display: block;
-            width: 100%;
-            text-align: center;
         }
 
         /* Main Content */
@@ -95,10 +89,7 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
             background-color: #1d1d1d; /* Dark background for main content */
-            border-radius: 0; /* Sharp edges */
-            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
             color: #ffffff;
         }
 
@@ -108,8 +99,8 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px;
-            border-radius: 12px;
             background-color: #333333;
+            border-radius: 12px;
         }
 
         .search-bar input {
@@ -138,12 +129,75 @@
             color: #333333;
             flex: 1;
             overflow-y: auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
         }
 
         #calendar {
             max-width: 100%;
             margin: 0 auto;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto; /* 10% from the top and centered */
+            padding: 20px;
+            border-radius: 12px;
+            width: 40%; /* Could be more or less, depending on screen size */
+            color: #333;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-content label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .modal-content select,
+        .modal-content input[type="text"],
+        .modal-content input[type="time"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            background-color: #b89e80;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .modal-content .close-button {
+            background-color: #888;
+        }
+
+        .modal-content button:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -154,9 +208,9 @@
             <img src="user-avatar.png" alt="User Avatar">
             <p>Hi, First name of the user</p>
             <div class="sidebar-menu">
-                <div class="menu-item">Home</div>
+                <div class="menu-item"><a href="Home.html">Home</a></div>
                 <div class="menu-item active">Calendar</div>
-                <div class="menu-item">Courses</div>
+                <div class="menu-item"><a href="Courses.html">Courses</a></div>
             </div>
         </div>
 
@@ -180,23 +234,148 @@
         </div>
     </div>
 
+    <!-- Modal for Adding Event -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <h2>Add Event</h2>
+            <form id="eventForm">
+                <label for="eventDate">Date:</label>
+                <input type="text" id="eventDate" name="eventDate" readonly>
+
+                <label for="courseSelect">Course:</label>
+                <select id="courseSelect" name="courseSelect" required>
+                    <option value="">Select Course</option>
+                    <!-- Options will be populated dynamically -->
+                </select>
+
+                <label for="eventType">Event Type:</label>
+                <select id="eventType" name="eventType" required>
+                    <option value="">Select Event Type</option>
+                    <option value="Homework">Homework</option>
+                    <option value="Study Session">Study Session</option>
+                    <option value="Lab Task">Lab Task</option>
+                    <option value="Lecture">Lecture</option>
+                    <option value="Exam">Exam</option>
+                    <!-- Add more event types as needed -->
+                </select>
+
+                <label for="eventName">Event Name:</label>
+                <input type="text" id="eventName" name="eventName" required>
+
+                <label for="eventTime">Time:</label>
+                <input type="time" id="eventTime" name="eventTime" required>
+
+                <div style="text-align: right;">
+                    <button type="button" class="close-button" onclick="closeModal()">Cancel</button>
+                    <button type="submit">Add Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-
+    <!-- Mock Database -->
+    <script src="database.js"></script>
+    <!-- Main Script -->
     <script>
+        let calendar;
+        let selectedDate;
+
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
-            const calendar = new FullCalendar.Calendar(calendarEl, {
+            calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridMonth,dayGridWeek,dayGridDay'
                 },
-                
+                dateClick: function(info) {
+                    openModal(info.dateStr);
+                },
+                events: loadCalendarEvents()
             });
             calendar.render();
         });
+
+        function loadCalendarEvents() {
+            let events = [];
+            db.forEach(course => {
+                course.events.forEach(event => {
+                    events.push({
+                        title: `${course.course_ID}: ${event.name}`,
+                        start: event.date + 'T' + event.time_interval,
+                        color: course.color
+                    });
+                });
+            });
+            return events;
+        }
+
+        function openModal(dateStr) {
+            selectedDate = dateStr;
+            document.getElementById('eventDate').value = selectedDate;
+
+            // Populate courses in the dropdown
+            const courseSelect = document.getElementById('courseSelect');
+            courseSelect.innerHTML = '<option value="">Select Course</option>'; // Reset options
+            db.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.course_ID;
+                option.textContent = `${course.course_ID} - ${course.course_Name}`;
+                courseSelect.appendChild(option);
+            });
+
+            document.getElementById('eventModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('eventForm').reset();
+            document.getElementById('eventModal').style.display = 'none';
+        }
+
+        document.getElementById('eventForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const courseID = document.getElementById('courseSelect').value;
+            const eventType = document.getElementById('eventType').value;
+            const eventName = document.getElementById('eventName').value;
+            const eventTime = document.getElementById('eventTime').value;
+
+            if (!courseID || !eventType || !eventName || !eventTime) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            // Update the mock database
+            const course = db.get(courseID);
+            const newEvent = {
+                date: selectedDate,
+                time_interval: eventTime,
+                name: eventName,
+                type: eventType,
+                completed: false
+            };
+            course.events.push(newEvent);
+
+            // Add event to calendar
+            calendar.addEvent({
+                title: `${courseID}: ${eventName}`,
+                start: selectedDate + 'T' + eventTime,
+                color: course.color
+            });
+
+            closeModal();
+        });
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('eventModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        };
     </script>
 </body>
 </html>
