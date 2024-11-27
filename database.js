@@ -6,7 +6,7 @@ const db = new Map([
         course_Name: 'Digital Logic',
         credit: 3,
         term: 242,
-        color: 'cyan',
+        color: '#FF0000',
         events: [
             { date: '2024-11-09', time_interval: '10:00am to 11:00am', name: 'Hard Homework', type: 'Assignment', completed: false }
         ]
@@ -28,7 +28,7 @@ const db = new Map([
         term: 241,
         color: 'purple',
         events: [
-            { date: '2024-11-09', time_interval: '3:00pm to 4:30pm', name: 'Lab Test 1', type: 'Lab', completed: false }
+            { date: '2024-11-27', time_interval: '3:00pm to 4:30pm', name: 'Lab Test 1', type: 'Lab', completed: false }
         ]
     }]
 ]);

@@ -5,200 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
-    <style>
-        /* General Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        /* Full-page layout */
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #f0f2f5;
-        }
-
-        /* Main Container */
-        .container {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            padding: 0;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 18%;
-            background-color: #333333;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #ffffff;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-bottom: 10px;
-        }
-
-        .sidebar p {
-            margin-top: 10px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .sidebar-menu {
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            margin: 8px 0;
-            background-color: #ffffff;
-            border-radius: 12px;
-            cursor: pointer;
-            color: #333;
-            font-weight: bold;
-            transition: 0.3s;
-            justify-content: center;
-        }
-
-        .menu-item.active, .menu-item:hover {
-            background-color: #b89e80;
-            color: #fff;
-        }
-
-        .menu-item img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-        }
-
-        /* Main Content */
-        .main-content {
-            width: 82%;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            background-color: #262626;
-            color: #ffffff;
-        }
-
-        /* Top Bar */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background-color: #333333;
-        }
-
-        .search-bar input {
-            width: 300px;
-            padding: 8px;
-            border-radius: 20px;
-            border: none;
-            outline: none;
-            background-color: #ffffff;
-            padding-left: 20px;
-            color: #333;
-        }
-
-        .top-icons img {
-            width: 25px;
-            height: 25px;
-            margin-left: 15px;
-            cursor: pointer;
-        }
-
-        /* Calendar Section */
-        .calendar-section {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 15px;
-            color: #333333;
-            flex: 1;
-            overflow-y: auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-
-        #calendar {
-            max-width: 100%;
-            margin: 0 auto;
-        }
-
-        /* To-do List Section */
-        .todo-section {
-            padding: 20px;
-            background-color: #1d1d1d;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .todo-section h3 {
-            color: #ffffff;
-            margin-bottom: 15px;
-            font-size: 1.4em;
-        }
-
-        .todo-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            background-color: #333333;
-            color: #ffffff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .confirm-button {
-            display: block;
-            padding: 8px 20px;
-            background-color: #b89e80;
-            border: none;
-            border-radius: 12px;
-            color: #ffffff;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .confirm-button:disabled {
-            background-color: #888888;
-            cursor: not-allowed;
-        }
-        a {
-            text-decoration: none;
-            color: black;
-        }
-    </style>
+    <link rel="stylesheet" href="HomePageStyle.css">
 </head>
 <body>
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <img src="user-avatar.png" alt="User Avatar">
+            <a href="EditAccount.html"><img src="userAvatar.png" alt="User Avatar"></a>
             <p>Hi, First name of the user</p>
             <div class="sidebar-menu">
                 <div class="menu-item active">Home</div>
-                <div class="menu-item"><a href="Calendar.html">Calendar</a></div>
-                <div class="menu-item"><a href=Courses.html>Courses</a></div>
+                <a href="Calendar.html"><div class="menu-item">Calendar</div></a>
+                <a href="Courses.html"><div class="menu-item">Courses</div></a>
             </div>
         </div>
 
@@ -209,9 +27,13 @@
                 <div class="search-bar">
                     <input type="text" placeholder="Search">
                 </div>
-                <div class="top-icons">
-                    <img src="settings-icon.png" alt="Settings Icon">
-                    <img src="notification-icon.png" alt="Notifications Icon">
+                <div class="top-icons button:hover">
+                    <a href="Settings.html">
+                        <img src="SettingIcon.png" alt="Settings Icon" class="top-icons img">
+                    </a>
+                    <a href="#">
+                        <img src="NotificationIcon.png" alt="Notifications Icon" class="top-icons img" onclick="showNotifications()">
+                    </a>
                 </div>
             </div>
 
@@ -229,13 +51,24 @@
         </div>
     </div>
 
+    <!-- Modal for Notifications -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <h2>Today's Tasks</h2>
+            <div id="notificationTasks"></div>
+            <button onclick="closeNotificationModal()">Close</button>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="database.js"></script>
     <script>
         let selectedTasks = new Set();
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const calendarEl = document.getElementById('calendar');
+            let selectedDateEl = null;
+
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 headerToolbar: {
@@ -243,30 +76,43 @@
                     center: 'title',
                     right: 'dayGridMonth,dayGridWeek,dayGridDay'
                 },
-                dateClick: function(info) {
+                dateClick: function (info) {
+                    if (selectedDateEl) {
+                        selectedDateEl.style.backgroundColor = ''; // Reset previous date
+                    }
+                    const clickedDateEl = info.dayEl;
+                    clickedDateEl.style.backgroundColor = '#D3D3D3'; // Highlight selected date
+                    selectedDateEl = clickedDateEl;
+
                     displayTasks(info.dateStr);
                 }
             });
+
             calendar.render();
             displayTasks(new Date().toISOString().split('T')[0]);
         });
 
         function displayTasks(date) {
             const todoList = document.getElementById('todoList');
-            todoList.innerHTML = '';
+            todoList.innerHTML = ''; // Clear existing tasks
+
             document.getElementById('todoDay').textContent = `${new Date(date).toLocaleDateString('default', { weekday: 'long' })} To Do:`;
             selectedTasks.clear();
             document.getElementById('confirmButton').disabled = true;
 
-            db.forEach((course) => {
+            db.forEach(course => {
                 course.events.forEach(event => {
                     if (event.date === date && !event.completed) {
                         const task = document.createElement('div');
                         task.classList.add('todo-item');
+
                         task.innerHTML = `
-                            <span style="color: ${course.color}"><strong>${course.course_ID}</strong>: ${event.name}<br>${event.time_interval} - ${event.type}</span>
+                            <span style="color: ${course.color};">
+                                <strong>${course.course_ID}</strong>: ${event.name}<br>${event.time_interval} - ${event.type}
+                            </span>
                             <input type="checkbox" onchange="toggleTask('${course.course_ID}', '${event.name}')">
                         `;
+
                         todoList.appendChild(task);
                     }
                 });
@@ -293,6 +139,35 @@
             selectedTasks.clear();
             document.getElementById('confirmButton').disabled = true;
             displayTasks(new Date().toISOString().split('T')[0]);
+        }
+
+        function showNotifications() {
+            const today = new Date().toISOString().split('T')[0];
+            const notificationTasks = document.getElementById('notificationTasks');
+            notificationTasks.innerHTML = '';
+
+            let tasksFound = false;
+
+            db.forEach(course => {
+                course.events.forEach(event => {
+                    if (event.date === today && !event.completed) {
+                        tasksFound = true;
+                        const taskElement = document.createElement('div');
+                        taskElement.innerHTML = `<strong>${course.course_ID} (${course.course_Name}):</strong> ${event.name}`;
+                        notificationTasks.appendChild(taskElement);
+                    }
+                });
+            });
+
+            if (!tasksFound) {
+                notificationTasks.innerHTML = "You don't have any tasks for today.";
+            }
+
+            document.getElementById('notificationModal').style.display = 'block';
+        }
+
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').style.display = 'none';
         }
     </script>
 </body>

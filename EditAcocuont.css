@@ -1,0 +1,61 @@
+/*Edit Account*/
+#EAtitle{
+    display:grid;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 40px;
+    font-weight: bold;
+    color: black;
+    background-color: #fff;
+    width: 500px;
+    height: 90px;
+    margin: 10px 250px 60px 250px;
+    padding: 10px 20px;
+}
+.fields *{
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-weight: bold;
+    flex: 1; /*Labels take up equal space */
+    font-size: 16px;
+    margin-right: 15px; /*Spacing between label and input */
+    gap: 10px;
+        }
+
+ input {
+    flex: 2; /* Inputs take up more space*/
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    }  
+#email{
+    margin-left: 40px;
+}
+#pw{
+    margin-left: 9px;
+}
+.button-container{
+    display: flex; /* Enables flexbox */
+    justify-content: center; /* Centers the buttons horizontally */
+    gap: 20px; /* Adds space between the buttons */
+    margin-top: 20px;
+}
+.EAbuttons {
+    /* display: block; */
+    font-weight: bold;
+    font-size: 17px;
+    width: 7em;
+    height: 3em;
+    margin: 0px 100px;
+    border-radius: 20px;
+}
+.EAbuttons:hover{
+    color: white;
+    background-color: #b89e80;
+    cursor: pointer;
+}
