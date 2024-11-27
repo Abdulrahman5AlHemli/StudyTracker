@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
+        
         <div class="sidebar">
             <a href="EditAccount.html"><img src="userAvatar.png" alt="User Avatar"></a>
             <p>Hi, First name of the user</p>
@@ -20,9 +20,9 @@
             </div>
         </div>
 
-        <!-- Main Content -->
+        
         <div class="main-content">
-            <!-- Top Bar -->
+            
             <div class="top-bar">
                 <div class="search-bar">
                     <input type="text" placeholder="Search">
@@ -37,12 +37,12 @@
                 </div>
             </div>
 
-            <!-- Calendar Section -->
+            
             <div class="calendar-section">
                 <div id="calendar"></div>
             </div>
 
-            <!-- To-do List Section -->
+            
             <div class="todo-section">
                 <h3 id="todoDay">Today To Do:</h3>
                 <div id="todoList"></div>
@@ -51,7 +51,7 @@
         </div>
     </div>
 
-    <!-- Modal for Notifications -->
+    
     <div id="notificationModal" class="modal">
         <div class="modal-content">
             <h2>Today's Tasks</h2>
@@ -78,10 +78,10 @@
                 },
                 dateClick: function (info) {
                     if (selectedDateEl) {
-                        selectedDateEl.style.backgroundColor = ''; // Reset previous date
+                        selectedDateEl.style.backgroundColor = ''; 
                     }
                     const clickedDateEl = info.dayEl;
-                    clickedDateEl.style.backgroundColor = '#D3D3D3'; // Highlight selected date
+                    clickedDateEl.style.backgroundColor = '#D3D3D3'; 
                     selectedDateEl = clickedDateEl;
 
                     displayTasks(info.dateStr);
@@ -94,7 +94,7 @@
 
         function displayTasks(date) {
             const todoList = document.getElementById('todoList');
-            todoList.innerHTML = ''; // Clear existing tasks
+            todoList.innerHTML = ''; 
 
             document.getElementById('todoDay').textContent = `${new Date(date).toLocaleDateString('default', { weekday: 'long' })} To Do:`;
             selectedTasks.clear();
