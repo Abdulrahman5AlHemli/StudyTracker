@@ -1,4 +1,4 @@
-/*Edit Account*/
+
 #EAtitle{
     display:grid;
     justify-content: center;
@@ -20,14 +20,14 @@
     align-items: center;
     text-align: center;
     font-weight: bold;
-    flex: 1; /*Labels take up equal space */
+    flex: 1; 
     font-size: 16px;
-    margin-right: 15px; /*Spacing between label and input */
+    margin-right: 15px; 
     gap: 10px;
         }
 
  input {
-    flex: 2; /* Inputs take up more space*/
+    flex: 2; 
     padding: 8px;
     font-size: 16px;
     border: 1px solid #ccc;
@@ -40,13 +40,13 @@
     margin-left: 9px;
 }
 .button-container{
-    display: flex; /* Enables flexbox */
-    justify-content: center; /* Centers the buttons horizontally */
-    gap: 20px; /* Adds space between the buttons */
+    display: flex; 
+    justify-content: center; 
+    gap: 20px; 
     margin-top: 20px;
 }
 .EAbuttons {
-    /* display: block; */
+    
     font-weight: bold;
     font-size: 17px;
     width: 7em;
