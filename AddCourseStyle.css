@@ -1,4 +1,4 @@
-/* General styles */
+
 * {
     margin: 0;
     padding: 0;
@@ -16,7 +16,7 @@ html, body {
     align-items: center;
 }
 
-/* Form Container  */
+
 .form-container {
     background-color: #1d1d1d;
     padding: 30px;
@@ -49,7 +49,7 @@ input, select {
     margin-top: 5px;
 }
 
-/* Buttons */
+
 .buttons {
     margin-top: 20px;
     display: flex;
