@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Courses</title>
     <link rel="stylesheet" href="webPageStyle_general.css">
+    <script src="api.js"></script>
+    <script>verifyIfLoggedIn()</script>
 </head>
 <body>
     <div class="container">
         
         <div class="sidebar">
             <a href="EditAccount.html"><img src="userAvatar.png" alt="User Avatar"></a>
-            <p>Hi, First name of the user</p>
+            <p id="user-greeting"></p>
             <div class="sidebar-menu">
                 <a href="Home.html"><div class="menu-item">Home</div></a>
                 <a href="Calendar.html"><div class="menu-item">Calendar</div></a>
@@ -24,7 +26,7 @@
             <!-- Top Bar -->
             <div class="top-bar">
                 <div class="search-bar">
-                    <input type="text" placeholder="Course Name">
+                    <input id="search-input" type="text" placeholder="Course Name">
                 </div>
                 <div class="top-icons button:hover">
                     <a href="Settings.html">
@@ -59,22 +61,28 @@
 
     <script src="database.js"></script>
     <script>
-        function showNotifications() {
+        setGreetingMsg();
+
+        async function showNotifications() {
             const today = new Date().toISOString().split('T')[0];
             const notificationTasks = document.getElementById('notificationTasks');
             notificationTasks.innerHTML = '';
 
             let tasksFound = false;
 
-            db.forEach(course => {
-                course.events.forEach(event => {
-                    if (event.date === today && !event.completed) {
-                        tasksFound = true;
-                        const taskElement = document.createElement('div');
-                        taskElement.innerHTML = `<strong>${course.course_ID} (${course.course_Name}):</strong> ${event.name}`;
-                        notificationTasks.appendChild(taskElement);
-                    }
-                });
+            let events = [];
+            const response = await getEvents();
+            if (response && response.events) {
+                events = response.events;
+            }
+
+            events.forEach(event => {
+                if (event.date === today && !event.completed) {
+                    tasksFound = true;
+                    const taskElement = document.createElement('div');
+                    taskElement.innerHTML = `<strong>${event.course.courseId} (${event.course.courseName}):</strong> ${event.name}`;
+                    notificationTasks.appendChild(taskElement);
+                }
             });
 
             if (!tasksFound) {
@@ -88,18 +96,32 @@
             document.getElementById('notificationModal').style.display = 'none';
         }
 
-        let editMode = false;
+        
+        document.getElementById("search-input").addEventListener("change", function(e) {
+            loadCourses(e.target.value);
+        });
 
-        function loadCourses() {
+        let editMode = false;
+        let courses = [];
+
+        async function loadCourses(searchQuery) {
             const courseList = document.getElementById('courseList');
             courseList.innerHTML = '';
 
-            db.forEach(course => {
+            if (!searchQuery) {
+                const response = await getCourses();
+                courses = response.courses;
+            } else {
+                // Filter courses
+                courses = courses.filter(course => course.courseName.toLowerCase().includes(searchQuery))
+            }
+
+            courses.forEach(course => {
                 const courseItem = document.createElement('div');
                 courseItem.classList.add('course-item');
                 courseItem.innerHTML = `
                     <div>
-                        <span style="color: ${course.color}">${course.course_ID}</span> (${course.course_Name})<br>
+                        <span style="color: ${course.color}">${course.courseId}</span> (${course.courseName})<br>
                         Credit: ${course.credit}
                     </div>
                     <span>Term: ${course.term}</span>
@@ -112,12 +134,12 @@
                     const modifyBtn = document.createElement('button');
                     modifyBtn.classList.add('modify-btn');
                     modifyBtn.textContent = 'Modify';
-                    modifyBtn.onclick = () => modifyCourse(course.course_ID);
+                    modifyBtn.onclick = () => modifyCourse(course._id);
 
                     const deleteBtn = document.createElement('button');
                     deleteBtn.classList.add('delete-btn');
                     deleteBtn.textContent = 'Delete';
-                    deleteBtn.onclick = () => deleteCourse(course.course_ID);
+                    deleteBtn.onclick = () => deleteCourse(course._id);
 
                     actions.appendChild(modifyBtn);
                     actions.appendChild(deleteBtn);
@@ -133,9 +155,9 @@
             loadCourses();
         }
 
-        function deleteCourse(courseID) {
+        async function deleteCourse(courseID) {
             alert("Are you sure you want to delete?");
-            db.delete(courseID);
+            await handleDeleteCourse(courseID);
             loadCourses();
         }
 
@@ -144,7 +166,7 @@
             window.location.href = 'ModifyCourse.html';
         }
 
-        document.addEventListener('DOMContentLoaded', loadCourses);
+        document.addEventListener('DOMContentLoaded', () => loadCourses());
     </script>
 </body>
 </html>

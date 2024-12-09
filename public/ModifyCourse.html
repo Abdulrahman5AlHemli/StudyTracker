@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modify Course</title>
     <link rel= 'stylesheet' href='webPageStyle_general.css'>
+    <script src="api.js"></script>
+    <script>verifyIfLoggedIn()</script>
 </head>
 <body class = "formBodyEl">
     <div id = 'MDform-container'class="form-container">
@@ -23,7 +25,7 @@
             <input type="text" id="term" required>
 
             <label for="color">Color (Hex):</label>
-            <input type="color" class="color" required>
+            <input id="color" type="color" class="color" required>
 
             <div class="MDbuttons">
                 <button type="button" class="MDbutton MDcancel-button" onclick="window.location.href='Courses.html'">Cancel</button>
@@ -34,18 +36,20 @@
 
     <script src="database.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             const courseID = localStorage.getItem('courseToModify');
-            const course = db.get(courseID);
+            // const course = db.get(courseID);
+            const course = await getCourseById(courseID);
+            
 
-            document.getElementById('courseID').value = course.course_ID;
-            document.getElementById('courseName').value = course.course_Name;
+            document.getElementById('courseID').value = course.courseId;
+            document.getElementById('courseName').value = course.courseName;
             document.getElementById('credit').value = course.credit;
             document.getElementById('term').value = course.term;
             document.getElementById('color').defaultValue = course.color;
         });
 
-        document.getElementById('modifyCourseForm').addEventListener('submit', function(e) {
+        document.getElementById('modifyCourseForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const courseID = document.getElementById('courseID').value;
             const courseName = document.getElementById('courseName').value;
@@ -53,15 +57,16 @@
             const term = document.getElementById('term').value;
             const color = document.getElementById('color').value;
 
-            db.set(courseID, {
-                course_ID: courseID,
-                course_Name: courseName,
+            const newCourse = {
+                _id: localStorage.getItem('courseToModify'),
+                courseId: courseID,
+                courseName,
                 credit: Number(credit),
-                term: term,
-                color: color,
-                events: db.get(courseID).events  // Retain existing events
-            });
+                term,
+                color,
+            };
 
+            const response = await updateCourse(newCourse);
             window.location.href = 'Courses.html';
         });
     </script>

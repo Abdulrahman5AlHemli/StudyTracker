@@ -7,13 +7,15 @@
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     
     <link rel="stylesheet" href="webPageStyle_general.css">
+    <script src="api.js"></script>
+    <script>verifyIfLoggedIn()</script>
 </head>
 <body>
     <div class="container">
         
         <div class="sidebar">
             <a href="EditAccount.html"><img src="userAvatar.png" alt="User Avatar"></a>
-            <p>Hi, First name of the user</p>
+            <p id="user-greeting"></p>
             <div class="sidebar-menu">
                 <a href="Home.html"><div class="menu-item">Home</div></a>
                 <div class="menu-item active">Calendar</div>
@@ -96,9 +98,19 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="database.js"></script>
     <script>
+        setGreetingMsg();
+
+        // Fetch courses for user
+        let courses = [];
+        (async function() {
+            const response = await getCourses();
+            if (response && response.courses) {
+                courses = response.courses;
+            }
+        })();
+
         let calendar;
         let selectedDate;
-
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
             calendar = new FullCalendar.Calendar(calendarEl, {
@@ -116,18 +128,19 @@
             calendar.render();
         });
 
-        function loadCalendarEvents() {
+        async function loadCalendarEvents() {
             let events = [];
-            db.forEach(course => {
-                course.events.forEach(event => {
-                    events.push({
-                        title: `${course.course_ID}: ${event.name}`,
-                        start: event.date + 'T' + event.time_interval,
-                        color: course.color
-                    });
-                });
+            const response = await getEvents();
+            if  (response && response.events) {
+                events = response.events;
+            }
+            events.forEach(event => {
+                calendar.addEvent({
+                    title: `${event.course.courseId}: ${event.name}`,
+                    start: event.date + 'T' + event.time,
+                    color: event.course.color
+                })
             });
-            return events;
         }
 
         function openModal(dateStr) {
@@ -136,10 +149,10 @@
 
             const courseSelect = document.getElementById('courseSelect');
             courseSelect.innerHTML = '<option value="">Select Course</option>';
-            db.forEach(course => {
+            courses.forEach(course => {
                 const option = document.createElement('option');
-                option.value = course.course_ID;
-                option.textContent = `${course.course_ID} - ${course.course_Name}`;
+                option.value = course._id;
+                option.textContent = `${course.courseId} - ${course.courseName}`;
                 courseSelect.appendChild(option);
             });
 
@@ -151,22 +164,26 @@
             document.getElementById('eventModal').style.display = 'none';
         }
 
-        function showNotifications() {
+        async function showNotifications() {
             const today = new Date().toISOString().split('T')[0];
             const notificationTasks = document.getElementById('notificationTasks');
             notificationTasks.innerHTML = '';
 
             let tasksFound = false;
 
-            db.forEach(course => {
-                course.events.forEach(event => {
-                    if (event.date === today && !event.completed) {
-                        tasksFound = true;
-                        const taskElement = document.createElement('div');
-                        taskElement.innerHTML = `<strong>${course.course_ID} (${course.course_Name}):</strong> ${event.name}`;
-                        notificationTasks.appendChild(taskElement);
-                    }
-                });
+            let events = [];
+            const response = await getEvents();
+            if (response && response.events) {
+                events = response.events;
+            }
+
+            events.forEach(event => {
+                if (event.date === today && !event.completed) {
+                    tasksFound = true;
+                    const taskElement = document.createElement('div');
+                    taskElement.innerHTML = `<strong>${event.course.courseId} (${event.course.courseName}):</strong> ${event.name}`;
+                    notificationTasks.appendChild(taskElement);
+                }
             });
 
             if (!tasksFound) {
@@ -180,7 +197,7 @@
             document.getElementById('notificationModal').style.display = 'none';
         }
 
-        document.getElementById('eventForm').addEventListener('submit', function(e) {
+        document.getElementById('eventForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const courseID = document.getElementById('courseSelect').value;
@@ -193,20 +210,26 @@
                 return;
             }
 
-            const course = db.get(courseID);
             const newEvent = {
                 date: selectedDate,
-                time_interval: eventTime,
+                time: eventTime,
                 name: eventName,
                 type: eventType,
-                completed: false
+                completed: false,
+                course: courseID
             };
-            course.events.push(newEvent);
+
+            const response = await createEvent(newEvent);
+            if (!response.ok) {
+                // show Error
+                return;
+            }
+            const event = response.data
 
             calendar.addEvent({
-                title: `${courseID}: ${eventName}`,
+                title: `${event.course.courseId}: ${eventName}`,
                 start: selectedDate + 'T' + eventTime,
-                color: course.color
+                color: event.course.color
             });
 
             closeModal();

@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EditAccount</title>
     <link rel = "stylesheet" href = 'webPageStyle_general.css'>
+    <script src="api.js"></script>
+    <script>verifyIfLoggedIn()</script>
+</head>
     <body>
         <div class="container">
             
             <div class="sidebar">
                 <a href="EditAccount.html"><img src="userAvatar.png" alt="User Avatar"></a>
-                <p>Hi, First name of the user</p>
+                <p id="user-greeting"></p>
                 <div class="sidebar-menu">
                     <a href="Home.html"><div class="menu-item">Home</div></a>
                     <a href="Calendar.html"><div class="menu-item">Calendar</div></a>
@@ -39,9 +42,55 @@
                         <input type="password" name="password" id="pw">
                         <div class="buttons">
                             <button type="button" class="MDbutton MDcancel-button" style="margin-right: 50%;" onclick='window.location.href="Settings.html"'>Cancel</button>
-                            <button type="button" class="MDbutton" >Save</button> 
+                            <button type="submit" class="MDbutton" >Save</button> 
                         </div>
                 </form>
         </div>
+
+        <script>
+            setGreetingMsg();
+
+            
+            // Set values in input field
+            const user = getUserData()
+            if (user) {
+                document.getElementById("FN").value = user.firstName;
+                document.getElementById("LN").value = user.lastName;
+                document.getElementById("email").value = user.email;
+                document.getElementById("Phone").value = user.phone;
+                // document.getElementById("pw").value = user.password;
+            }
+
+
+            document.querySelector('form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const firstName = document.getElementById('FN').value;
+                const lastName = document.getElementById('LN').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('Phone').value;
+                const password = document.getElementById('pw').value;
+
+                if (!firstName || !lastName || !email || !phone) {
+                    alert('Please fill in all fields.');
+                    return;
+                }
+
+                const updatedUser = {
+                    _id: user._id,
+                    firstName,
+                    lastName,
+                    email,
+                    phone,
+                    password
+                }
+                const response = await handleUpdateUser(updatedUser);
+                // if (!response.ok) {
+                //     // show error message
+                // }
+                localStorage.setItem("userData", JSON.stringify(response.data));
+                window.location.reload();
+            });
+        </script>
 
     </body>

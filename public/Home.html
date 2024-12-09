@@ -6,13 +6,15 @@
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <link rel="stylesheet" href="HomePageStyle.css">
+    <script src="api.js"></script>
+    <script>verifyIfLoggedIn()</script>
 </head>
 <body>
     <div class="container">
         
         <div class="sidebar">
             <a href="EditAccount.html"><img src="userAvatar.png" alt="User Avatar"></a>
-            <p>Hi, First name of the user</p>
+            <p id="user-greeting"></p>
             <div class="sidebar-menu">
                 <div class="menu-item active">Home</div>
                 <a href="Calendar.html"><div class="menu-item">Calendar</div></a>
@@ -63,7 +65,10 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="database.js"></script>
     <script>
+        setGreetingMsg();
+
         let selectedTasks = new Set();
+        let selectedDate = '';
 
         document.addEventListener('DOMContentLoaded', function () {
             const calendarEl = document.getElementById('calendar');
@@ -83,6 +88,7 @@
                     const clickedDateEl = info.dayEl;
                     clickedDateEl.style.backgroundColor = '#D3D3D3'; 
                     selectedDateEl = clickedDateEl;
+                    selectedDate = info.dateStr;
 
                     displayTasks(info.dateStr);
                 }
@@ -92,7 +98,7 @@
             displayTasks(new Date().toISOString().split('T')[0]);
         });
 
-        function displayTasks(date) {
+        async function displayTasks(date) {
             const todoList = document.getElementById('todoList');
             todoList.innerHTML = ''; 
 
@@ -100,27 +106,32 @@
             selectedTasks.clear();
             document.getElementById('confirmButton').disabled = true;
 
-            db.forEach(course => {
-                course.events.forEach(event => {
-                    if (event.date === date && !event.completed) {
-                        const task = document.createElement('div');
-                        task.classList.add('todo-item');
+            let events = [];
+            const response = await getEvents();
+            if (response && response.events) {
+                events = response.events;
+            }
 
-                        task.innerHTML = `
-                            <span style="color: ${course.color};">
-                                <strong>${course.course_ID}</strong>: ${event.name}<br>${event.time_interval} - ${event.type}
-                            </span>
-                            <input type="checkbox" onchange="toggleTask('${course.course_ID}', '${event.name}')">
-                        `;
+            events.forEach(event => {
+                if (event.date === date && !event.completed) {
+                    const {course} = event;
+                    const task = document.createElement('div');
+                    task.classList.add('todo-item');
 
-                        todoList.appendChild(task);
-                    }
-                });
+                    task.innerHTML = `
+                        <span style="color: ${course.color};">
+                            <strong>${course.courseId}</strong>: ${event.name}<br>${convertTimeToAMPM(event.time)} - ${event.type}
+                        </span>
+                        <input type="checkbox" onchange="toggleTask('${event._id}', '${event.name}')">
+                    `;
+
+                    todoList.appendChild(task);
+                }
             });
         }
 
-        function toggleTask(courseID, eventName) {
-            const key = `${courseID}-${eventName}`;
+        function toggleTask(eventId) {
+            const key = eventId;
             if (selectedTasks.has(key)) {
                 selectedTasks.delete(key);
             } else {
@@ -129,36 +140,42 @@
             document.getElementById('confirmButton').disabled = selectedTasks.size === 0;
         }
 
-        function confirmTasks() {
-            selectedTasks.forEach(taskKey => {
-                const [courseID, eventName] = taskKey.split('-');
-                const course = db.get(courseID);
-                const event = course.events.find(e => e.name === eventName);
-                if (event) event.completed = true;
-            });
+         async function confirmTasks() {
+            for (const taskId of selectedTasks) {
+                const response = await updateEvent({_id: taskId, completed: true});
+            }
+            // selectedTasks.forEach(taskKey => {
+            //     // const [courseID, eventName] = taskKey.split('-');
+            //     // const course = db.get(courseID);
+            //     // const event = course.events.find(e => e.name === eventName);
+            //     // if (event) event.completed = true;
+            // });
             selectedTasks.clear();
             document.getElementById('confirmButton').disabled = true;
-            displayTasks(new Date().toISOString().split('T')[0]);
+            displayTasks(selectedDate);
         }
 
-        function showNotifications() {
+        async function showNotifications() {
             const today = new Date().toISOString().split('T')[0];
             const notificationTasks = document.getElementById('notificationTasks');
             notificationTasks.innerHTML = '';
 
             let tasksFound = false;
 
-            db.forEach(course => {
-                course.events.forEach(event => {
-                    if (event.date === today && !event.completed) {
-                        tasksFound = true;
-                        const taskElement = document.createElement('div');
-                        taskElement.innerHTML = `<strong>${course.course_ID} (${course.course_Name}):</strong> ${event.name}`;
-                        notificationTasks.appendChild(taskElement);
-                    }
-                });
-            });
+            let events = [];
+            const response = await getEvents();
+            if (response && response.events) {
+                events = response.events;
+            }
 
+            events.forEach(event => {
+                if (event.date === today && !event.completed) {
+                    tasksFound = true;
+                    const taskElement = document.createElement('div');
+                    taskElement.innerHTML = `<strong>${event.course.courseId} (${event.course.courseName}):</strong> ${event.name}`;
+                    notificationTasks.appendChild(taskElement);
+                }
+            });
             if (!tasksFound) {
                 notificationTasks.innerHTML = "You don't have any tasks for today.";
             }

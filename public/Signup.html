@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>    
+    <link rel="stylesheet" href="webPageStyle_general.css">
+</head>
+<body>
+    <div class="container">
+        <div class="signup-form">
+            <h2 id="EAtitle"> User Signup </h2>
+            <form style="width: 30%;" action="">
+                <label for="FN">First Name:</label>
+                <input type="text" name="FirstName" id="FN">
+                <br><br>
+                <label for="LN">Last Name:</label>
+                <input type="text" name="LastName" id="LN">
+                <br><br>
+                <label for="email">Email:</label>
+                <input type="email" name="email" id="email">
+                <br><br>
+                <label for="Phone">Phone Number:</label>
+                <input type='number' name="phoneNumber" id="Phone" class = 'numberField'>
+                <br><br>
+                <label for="pw">Password:</label>
+                <input type="password" name="password" id="pw">
+                <div class="buttons">
+                    <button type="submit" class="MDbutton" >Signup</button> 
+                </div>
+            </form>
+            <div id="errorMsg" style="color: red; padding: 5px; margin-top: 10px;"></div>
+            <h4 style="margin-top: 20px; color: white;">
+                Already have an account?
+                <a style="color: white; text-decoration: underline;" href="Signin.html">SignIn</a>
+            </h4>
+        </div>
+    </div>
+
+    <!-- <script src="database.js"></script> -->
+    <script src="api.js"></script>
+    <script>
+
+        document.querySelector('form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const firstName = document.getElementById('FN').value;
+            const lastName = document.getElementById('LN').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('Phone').value;
+            const password = document.getElementById('pw').value;
+
+            if (!firstName || !lastName || !email || !phone || !password) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const newUser = {
+                firstName,
+                lastName,
+                email,
+                phone,
+                password
+            }
+
+            // Make signup API call
+            const response = await handleSignup(newUser);
+            if (!response.ok) {
+                // show error message
+                const errorDiv = document.getElementById('errorMsg').innerText =  response.data.message;
+                return;
+            }
+            localStorage.setItem("token", response.data.token)
+            localStorage.setItem("userData", JSON.stringify(response.data));
+            window.location.href = "Home.html"
+        });
+    </script>
+</body>
+</html>

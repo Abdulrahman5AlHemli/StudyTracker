@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notification settings</title>
     <link rel = "stylesheet" href = 'webPageStyle_general.css'>
+    <script src="api.js"></script>
+    <script>verifyIfLoggedIn()</script>
+</head>
     <body>
         <div class="container">
             
             <div class="sidebar">
                 <a href="EditAccount.html"><img src="userAvatar.png" alt="User Avatar"></a>
-                <p>Hi, First name of the user</p>
+                <p id="user-greeting"></p>
                 <div class="sidebar-menu">
                     <a href="Home.html"><div class="menu-item">Home</div></a>
                     <a href="Calendar.html"><div class="menu-item">Calendar</div></a>
@@ -52,4 +55,7 @@
                 </form>
         </div>
 
+        <script>
+            setGreetingMsg();
+        </script>
     </body>

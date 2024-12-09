@@ -11,7 +11,7 @@
         
         <div class="sidebar">
             <a href="EditAccount.html"><img src="userAvatar.png" alt="User Avatar"></a>
-            <p>Hi, First name of the user</p>
+            <p id="user-greeting"></p>
             <div class="sidebar-menu">
                 <a href='Home.html'><div class="menu-item">Home</div></a>
                 <a href="Calendar.html"><div class="menu-item">Calendar</div></a>
@@ -26,7 +26,14 @@
             <section class="settingsbuttons">
                 <button class="MDbutton" onclick='window.location.href="EditAccount.html"'>Edit Account</button>
                 <button class="MDbutton" onclick='window.location.href="NotificationPage.html"'>Notification</button>
-                <button class="MDbutton">Sign out</button>
+                <button class="MDbutton" onclick="signOut()">Sign out</button>
         </section>
-         </div>
+    </div>
+
+    <script>
+        function signOut() {
+            localStorage.clear();
+            window.location.href = "Signin.html"
+        }
+    </script>
 </body>

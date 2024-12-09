@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Course</title>
     <link rel = "stylesheet" href = 'webPageStyle_general.css'>
+    <script src="api.js"></script>
+    <script>verifyIfLoggedIn()</script>
 </head>
 <body class="formBodyEl">
     <div class="form-container">
@@ -23,7 +25,7 @@
             <input type="text" id="term" required>
 
             <label for="color">Color (Hex):</label>
-            <input type="color" class="color" value="#ff0000" required>
+            <input id="color" type="color" class="color" value="#ff0000" required>
 
 
             <div class="MDbuttons">
@@ -33,9 +35,9 @@
         </form>
     </div>
 
-    <script src="database.js"></script>
+    <!-- <script src="database.js"></script> -->
     <script>
-        document.getElementById('addCourseForm').addEventListener('submit', function(e) {
+        document.getElementById('addCourseForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const courseID = document.getElementById('courseID').value;
             const courseName = document.getElementById('courseName').value;
@@ -43,14 +45,19 @@
             const term = document.getElementById('term').value;
             const color = document.getElementById('color').value;
 
-            db.set(courseID, {
-                course_ID: courseID,
-                course_Name: courseName,
+            const newCourse = {
+                courseId: courseID,
+                courseName,
                 credit: Number(credit),
-                term: term,
-                color: color,
-                events: []
-            });
+                term,
+                color,
+            };
+
+            const response = await createCourse(newCourse);
+            if (!response.ok) {
+                // show error message
+                return;
+            }
 
             window.location.href = 'Courses.html';
         });

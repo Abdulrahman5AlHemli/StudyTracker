@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>    
+    <link rel="stylesheet" href="webPageStyle_general.css">
+</head>
+<body>
+    <div class="container">
+        <div class="signup-form">
+            <h2 id="EAtitle"> User Signin </h2>
+            <form style="width: 30%;" action="">
+                <label for="email">Email:</label>
+                <input type="email" name="email" id="email">
+                <br><br>
+                <label for="pw">Password:</label>
+                <input type="password" name="password" id="pw">
+                <div class="buttons">
+                    <button type="submit" class="MDbutton" >Signin</button> 
+                </div>
+            </form>
+            <div id="errorMsg" style="color: red; padding: 5px; margin-top: 10px;"></div>
+            <h4 style="margin-top: 20px; color: white;">
+                Don't have an account?
+                <a style="color: white; text-decoration: underline;" href="Signup.html">Signup</a>
+            </h4>
+        </div>
+    </div>
+
+    <!-- <script src="database.js"></script> -->
+    <script src="api.js"></script>
+    <script>
+
+        document.querySelector('form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('pw').value;
+
+            if (!email || !password) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const credentials = {
+                email,
+                password
+            }
+            const response = await handleLogin(credentials);
+            if (!response.ok) {
+                // show error message
+                const errorDiv = document.getElementById('errorMsg').innerText =  response.data.message;
+                return;
+            }
+            localStorage.setItem("token", response.data.token)
+            localStorage.setItem("userData", JSON.stringify(response.data));
+            window.location.href = "Home.html"
+        });
+    </script>
+</body>
+</html>
