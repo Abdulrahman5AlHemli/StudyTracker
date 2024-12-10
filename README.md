@@ -28,3 +28,6 @@ settings:
 notification: 
       this button will display the tasks you have today, if you don't have any tasks today a "You don't have any tasks today" otherwise it will show you the tasks you have today, you can check this functionality by changing the date on some of the tasks in the database.js file.
 ----------
+
+Deployment:
+    Deployed on vercel
